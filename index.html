@@ -15,7 +15,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 		<link rel="stylesheet" href="css/reveal.min.css">
-		<link rel="stylesheet" href="css/theme/sky.css" id="theme">
+		<link rel="stylesheet" href="css/theme/blood.css" id="theme">
 
 		<!-- For syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -46,11 +46,751 @@
 					<h1>Grown Up PHP</h1>
 
 					<aside class="notes">
+						<p>
+							Hi, I'm Hamish, I'm the CTO of SilverStripe, and welcome to my talk, which has the link-bait-y
+							title "Grown Up PHP"
+						</p>
+						<p>
+							I actually struggled with the title for this talk, so as we go through I'll be bringing
+							up some of the rejected titles. Both because they're still insightful, and also because
+							I already wrote the slides, and I'm lazy.
+						</p>
+						<p>
+							But basically, what I'm going to be covering is how PHP, despite it's reputation, can
+							be used to write software that solves important problems. It's grown a lot since it's
+							beginnings, both the language itself and the tooling ecosystem, and while the
+							stink of foul slander still hangs on it to an extent, I think it's a legitimate choice for
+							any size of project.
+						</p>
+						<p>
+							Of course, I'm a CTO of a company that amongst other things sells PHP based solutions to large
+							clients, so I have to say that. But I believe it too.
+						</p>
 					</aside>
 				</section>
 
 				<section>
-					<h1>THE END</h1>
+					<h5>Or</h5>
+					<h1>Please stop doing this:</h1>
+					<pre style="font-size: 90%"><code class="php" data-trim>
+$member = mysql_query("
+   SELECT *
+      FROM Users
+      WHERE Email={$_GET['email']}
+");
+               </code></pre>
+					<aside class="notes">
+						<p>
+							So here's a rejected title
+						</p>
+						<p>
+							Rasmus gave a great keynote yesterday that amongst other things described how PHP tries to
+							"scale down" to allow non or only fractionally technical people to write websites.
+						</p>
+						<p>
+							You are not these people though. And even the least technical person wants to be able
+							to not just put a website up, but keep it up, and not be replaced by spam.
+						</p>
+						<p>
+							So, while I'm _sure_ none of you do this, I see your secret shame - deadlines, budgets,
+							there are plenty of reasons you're going to feel like you need to cut corners. But what
+							I'm going to talk about is ways to avoid having to do cut corners more often - or at least make
+							the decision to write terrible code on purpose.
+						</p>
+						<p>
+							There's no excuse for this though.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h3>SilverStripe?</h3>
+					<img width=300 style="margin-right: 100px;" src="images/sslogo.png" />
+					<img width=300 src="images/ssqr.png" />
+
+					<h3><a href="http://www.silverstripe.org">www.silverstripe.org</a></h3>
+
+					<aside class="notes">
+						<p>
+							So I mentioned I'm CTO of SilverStripe. And if you missed the marketing blitz we've set
+							up outside, or the barrage of blue t-shirts around the place, you might be thinking
+							"What is SilverStripe?". To which I say, "thank you for asking, that's an increadibly
+							apropro question to ask".
+						</p>
+						<p>
+							SilverStripe is an open source PHP-based framework for developing web applications, and a CMS
+							built on that framework for developing content driven sites. It's a "modern" framework,
+							MVC based and Object Oriented.
+						</p>
+						<p>
+							SilverStripe is also the company that does a lot of the development for that framework, and
+							sells both bespoke development on top of that framework, and a platform and other services
+							that support that framework.
+						</p>
+						<p>
+							It's based here in Wellington, although we've got an office up in Auckland, over in Australia
+							and plans for complete world domination that _definitely_ don't involve attaching sawblades robots.
+						</p>
+						<p>
+							The framework and CMS are completely free - BSD licensed - and easy to set up, so if you get bored,
+							rather than tweeting about how much I suck, why don't you pop your laptop out, get it installed and
+							check it out. Or even raise a pull request - prize for the best one.
+						</p>
+						<p>
+							I haven't actually organised a prize though, so it's probably not going to be terribly good.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h5>Or</h5>
+					<h1>Just use Silver Stripe</h1>
+					<aside class="notes">
+						<p>
+							Here's another rejected title
+						</p>
+						<p>
+							I'd like to think I'm only here because I'm awesome, and everyone is super interested in everything
+							I have to say. But impinging annoyingly on my ego-bubble is the fact that my employeer is a sponsor
+							of this conference.
+						</p>
+						<p>
+							I don't want this to turn into an "ad disguised as a presentation" though. SilverStripe is
+							definitely the solution for every problem you have, and any other decision is probably the wrong
+							one. But there are plenty of people who can't make the right decision - maybe you just
+							enjoy the pain a deliberately wrong decision makes, or maybe criminals are threatening your family.
+							Whatever the reason for your terrible choices, it doesn't seem fair to harrass you about them
+							for 50 minutes.
+						</p>
+						<p>
+							So although I'll be discussing things I've learned while I've been working at SilverStripe, and
+							how I think SilverStripe supports the goals I'm laying out here, I'll also be discussing
+							the competition, and things I don't think SilverStripe solves as well as it could - yet.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h2>Hamish</h2>
+					<h4>That's my name</h4>
+					<img src="images/hamish.jpg" />
+					<h4>Don't wear it out</h4>
+
+					<aside class="notes">
+						<p>
+							As I've mentioned, my name is Hamish Friedlander and I'm the CTO of SilverStripe. I've been
+							with SilverStripe for about 6 years now - I joined as a regular developer, but through a combination
+							of advanced code noodling, flattery and blackmail I've worked my way up.
+						</p>
+						<p>
+							I still get to do a reasonable amount of coding, although obviously I've taken on more responsibility.
+							With all the fighting ninja henchmen on the lips of volcanoes, and defeating super-brain computer AIs
+							from space at death-chess I don't always get to do as much as I'd like.
+						</p>
+						<p>
+							I'm also 38. And like in the movies, the fact that I've brought up that random detail so
+							obviously probably means it'll be important later.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h3>Why grow up?</h3>
+					<img width=700 src="images/moc_crop_2.jpg" />
+					<aside class="notes">
+						<p>
+							So I guess the first question to answer is - why grow up at all?
+						</p>
+						<p>
+							It has been said that we seem to be stuck in a culture of permanent adolescence. And there's no
+							question - being childish is fun. Being adult is care and responsibility and that can be scary and
+							constraining.
+						</p>
+						<p>
+							Here is a photo of some people. They're clearly being very serious and adult. And not very
+							much fun at all.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h5>Trust lets us participate in</h5>
+					<h3>solving important problems</h3>
+					<img width=700 src="images/moc.jpg" />
+					<aside class="notes">
+						<p>
+							Actually though, it's a photo from the NASA mission control center. They _are_ being
+							serious and adult, but it's because they're working on something important - something
+							that matters, with billions of dollars and lives on the line.
+						</p>
+						<p>
+							If you want to work on projects like this, people need to trust you. Grown up behaviour
+							leads to well though out decisions, well though out decisions lead to trust, trust leads to the
+							dark side - ah, I mean, being able to work on meaningful things.
+						</p>
+						<p>
+							And if you're not working on meaningful things - why are you doing it? Just for the money? I
+							mean, that's a good reason, money buys you pretty things.
+						</p>
+						<p>
+							But the nice thing about grown up code is that it can still be fun, you can actually make
+							more money, you can work on important projects, and you can both have and eat your cake.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h3>So what <strong>don't</strong> I mean by grown up code?</h3>
+					<aside class="notes">
+						<p>
+							So lets start off with looking at a couple of traditional ways projects get developed that
+							I don't mean when I say grown up.
+						</p>
+						<p>
+							They'll form a useful counterpoint to what I discuss later.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h3>"Serious" / "Enterprise"</h3>
+					<ul class="fragment">
+						<li>Statically typed</li>
+						<li>Heavily isolated components</li>
+						<li>Pre-defined architecture</li>
+						<li>Waterfall development methodology</li>
+					</ul>
+					<aside class="notes">
+						<p>
+							First off, lets take a look at big, corporate, "serious" development. Lots of people,
+							cubical farms, well defined constraints and everyone getting apportioned small segments
+							of code. Massively parallel development.
+						</p>
+						<p>
+							This sort of development isn't often done in PHP - it prefers languages that offer lots
+							of constraint and isolation, so that problems can be broken down into very small pieces,
+							worked on independently, and then stitched together. It needs something that provides
+							lots of compile time guarantees to try and reduce the chance of regressions caused by
+							this isolation.
+						</p>
+						<p>
+							This looks grown up because everyone is super serious, and wears a suit. This model
+							has a very high project failure rate though, and it has a few problems.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h3>Problem?</h3>
+					<ul class="fragment">
+						<li>Boring</li>
+						<li>Slow</li>
+						<li>Can't adapt to changing requirements</li>
+					</ul>
+					<aside class="notes">
+						<p>
+							So what are these problems?
+						</p>
+						<p>
+							I don't think these should be new - the main problems of this style of development are fairly
+							well known. It totally sucks all the fun out of development, and makes it hard to adjust
+							to client requirement changes.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h3>Also not what I mean: stereotypical "start-up"</h3>
+					<ul class="fragment">
+						<li>Cowboy / plan-less</li>
+						<li>Very rapid development cycles</li>
+						<li>Velocity above all</li>
+						<li>Sell it now / dev it later</li>
+					</ul>
+					<aside class="notes">
+						<p>
+							Another thing that I don't mean by grown up is the stereotype of "start-up" development
+							methodology. Quality, care, design, all are sacrificed to the gods of growth. Security,
+							scalability, these are things that will be solved eventually, in that mythical time
+							called "later".
+						</p>
+						<p>
+							This can sometimes look serious, because there is a lot of money being thrown around,
+							and surely rational human beings wouldn't spend billions of dollars unless everyone was
+							trustworthy, right?
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<blockquote>&nbsp;<br />Young people are just smarter<br />&nbsp;</blockquote>
+					<p style="text-align: right;">&mdash; Mark Zuckerberg, 2007</p>
+
+					<aside class="notes">
+						<p>
+							So here's a quote by famous start-up success Mark Zuckerberg. He did say this when he was young
+							himself - I'm not sure if he's changed his mind.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h5>Or</h5>
+					<h1>An old man complains about the young</h1>
+					<aside class="notes">
+						<p>
+							So it's been a while, but here's another rejected title
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h3>Maybe they are though?</h3>
+					<ul class="fragment">
+						<li>More likely, they just have different internal weighting to risk</li>
+						<li>Works fine until it doesn't</li>
+					</ul>
+					<aside class="notes">
+						<p>
+							But the truth is, this technique works. Sometimes. You're effectively gambling - accepting
+							big risks for the potentially big payoffs that result.
+						</p>
+						<p>
+							It's telling that once a startup makes it big, they don't keep working like this. Or at least,
+							the ones that stay big don't - some gamblers just don't know when to walk away from the table.
+						</p>
+						<p>
+							In fact, a lot of the things I'm going to describe come from start-ups that have been
+							playing fast and loose, and are looking to tighten up their behaviour without loosing their
+							sense of fun or their ability to react to change.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h3>What <strong>do</strong> you mean by grown up code then?</h3>
+					<div>
+						<h5 class="fragment">Maturity</h5>
+						<ul>
+							<li class="fragment">Clear comprehension of purpose</li>
+							<li class="fragment">Self-knowledge leading to appropriate decision making</li>
+							<li class="fragment">Respond to environment in an appropriate manner</li>
+						</ul>
+					</div>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h3>Being grown up isn't ignorance or fear</h3>
+					<h5>It's walking into the wilds with your eyes wide open</h5>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h3>Some things to be considering</h3>
+				</section>
+
+				<section>
+					<h3>Know your risks, and your resiliency</h3>
+					<ul>
+						<li class="fragment">"Serious" development completely constrains risk by preventing all change</li>
+						<li class="fragment">"Start-up" development completely ignores risk</li>
+						<li class="fragment">But grown-up development is <strong>know</strong> your risks, document them all, then implement sensible constrains based on trade-offs</li>
+					</ul>
+					<aside class="notes">
+						<p>
+
+						</p>
+						<p>
+							One of the things to notice is actually both "serious" and "start-up" development ideas
+							are fine  - they're on far extremes as far as managing risk goes, but they do have legitimate uses.
+						</p>
+						<p>
+							However they're only fine if you've analysed all your requirements and decided that the trade-offs
+							are correct and they are any appropriate method. But that rarely happens. Normally people slip
+							into doing whatever they're used to without really considering it.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<h3>Think about the costs of your decisions over the <strong>entire</strong> lifetime of the project</h3>
+					<ul>
+						<li class="fragment">Have a plan for support and maintenance</li>
+						<li class="fragment">Consider having to pick a project back up after everyone who knows anything about it has gone</li>
+						<li class="fragment">Are other people relying on a specific behaviour?</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Be aware of your user's requirements and experience</h3>
+					<ul>
+						<li class="fragment">What's the reason they're using your site?</li>
+						<li class="fragment">Nobody likes bugs, but willingness to accept them varies</li>
+						<li class="fragment">How will you know if there's something going wrong?</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Know your own capabilities</h3>
+					<ul>
+						<li class="fragment">You can't be a subject matter expert in "everything"</li>
+						<li class="fragment">Sometime, an existing inelegant solution is better than a non-existant perfect one</li>
+						<li class="fragment">You're never going to be able to do all the things you'd like to do</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>That sounds <strong>hard</strong></h3>
+					<h5>And I'm very lazy</h5>
+					<p class="fragment">That's OK - there are some common things you can do to help</p>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h5>Or</h5>
+					<h1>Some things you should be using</h1>
+					<h3>(that maybe you aren't)</h3>
+					<aside class="notes">
+						<p>
+							I'm not going to cover any of these in really significant detail - that'd be a _very_
+							long talk. There's a lot of existing training and information about these items.
+						</p>
+					</aside>
+				</section>
+
+				<section>
+					<section>
+						<h3>Agile development methodology</h3>
+						<ul class="fragment">
+							<li><h5>Scrum</h5></li>
+							<li>Kanban</li>
+						</ul>
+						<aside class="notes">
+							<p>
+								The first thing you need to do is pick an agile methodology. And then, and this is the hard bit,
+								actually _follow_ that methodology.
+							</p>
+							<p>
+								It's amazing how many shops say they're "agile" or "lean" - but if you dig into those statements
+								often you'll find what they actually mean is "no process" or "make it up as we go along"
+							</p>
+							<p>
+								Remember, grown-up code is about clear comprehension of purpose leading to correct decision making.
+								And a development methodology gives you tools for both resolving issues of clarity and purpose,
+								and a framework for decision making.
+							</p>
+							<p>
+								These methodologies are the true-est form of free, as they're just ideas. And most of the
+								time they've been invented by developers looking to be grown up without being serious. If
+								you're already in a company that has some oppressive form of waterfall, you might be stuck,
+								but for everyone that just has "nothing" - why?
+							</p>
+						</aside>
+					</section>
+
+					<section>
+						<h3>Scrum</h3>
+						<img id="scrum-diagram" src="images/scrum.png" style="display: inline-block; transition: width 5s, height 5s;" />
+						<ul>
+							<li id="shrink-scrum-diagram" class="fragment">Develop understanding of client's requirements by working with them on stories</li>
+							<li class="fragment">Iterate in short sprints to complete a set of stories</li>
+							<li class="fragment">Work closely with client at the end of every sprint to discuss requirements and trade-offs</li>
+						</ul>
+					</section>
+
+					<section>
+						<h3>Scrum tools</h3>
+						<ul>
+							<li>JIRA</li>
+							<li>Trello</li>
+							<li>About a million others</li>
+						</ul>
+					</section>
+
+				</section>
+
+				<section>
+					<section>
+						<h3>Frameworks</h3>
+						<ul class="fragment">
+							<li><h5>SilverStripe</h5></li>
+							<li>Symfony 2</li>
+							<li>Laravel</li>
+						</ul>
+						<aside class="notes">
+							<p>
+								The next thing is that you should almost always use a framework. Obviously at SilverStripe
+								we use SilverStripe, but there are some other things that are alright too.
+							</p>
+							<p>
+								Frameworks haven't just been developed to glorify their handsome, intelligent, well spoken
+								creators. They provide existing, tested, checked against specs and confirmed by use implementations
+								of things you almost always need in your apps
+							</p>
+							<p>
+								This can control risk. Reduces what you have to do. Introduced a subject matter
+								expert. All for free
+							</p>
+						</aside>
+					</section>
+
+					<section>
+						<h3>Frameworks - outsource your responsibility</h3>
+						<ul>
+							<li>Security</li>
+							<li>Common structures and APIs</li>
+							<li>Reusable components and seperation of concerns</li>
+							<li>Integrated testing system</li>
+						</ul>
+						<aside class="notes">
+							<p>
+								Here's just a small selection of the features any descent framework will give you
+							</p>
+							<p>
+								Any framework worth it's salt with give you tools for dealing with a large percentage of
+								security issues - content filters and escaping, XSS and CSRF protection, user management
+								and encryption
+							</p>
+							<p>
+								These are things you shouldn't be doing yourself - first because there's no need to, because
+								someone else has done it for you, and second because there's often catches or tricks when
+								implementing this stuff.
+							</p>
+							<p>
+								It'll also enforce patterns of development that help with ensuring maintainability and
+								readability.
+							</p>
+						</aside>
+					</section>
+
+					<section>
+						<pre style="font-size: 90%"><code class="php" data-trim>
+$member = mysql_fetch_assoc(mysql_query("
+   SELECT *
+      FROM Users
+      WHERE Email={$_GET['email']}
+"));
+                  </code></pre>
+						<aside class="notes">
+							<p>
+								So as a quick example, here's a slightly updated version of our evil friend from before. Not only
+								is this hard to read, hard to test, doesn't handle errors, and brittle, it's also got a SQL
+								injection in it.
+							</p>
+						</aside>
+					</section>
+
+					<section>
+						<pre style="font-size: 90%"><code class="php" data-trim>
+$member = Member::get()
+   ->filter('Email', $_GET['email'])
+   ->first();
+						</code></pre>
+						<aside class="notes">
+							<p>
+								And here's the same thing but in SilverStripe. SilverStripe includes a Member model already,
+								and will automatically escape arguments to avoid SQL injection.
+							</p>
+						</aside>
+					</section>
+
+					<section>
+						<pre style="font-size: 90%"><code class="php" data-trim>
+class BlogPost extends DataObject {
+   static $db = array(
+      'Post' => 'HTMLText'
+   );
+}
+						</code></pre>
+						<aside class="notes">
+							<p>
+								Of course, you can't always rely on your schema to never change. Frameworks often
+								have ways of managing this
+							</p>
+						</aside>
+					</section>
+
+					<section>
+						<pre style="font-size: 90%"><code class="php" data-trim>
+class BlogPost extends DataObject {
+   static $db = array(
+      'Post' => 'HTMLText'
+      'Tags' => 'Text'
+   );
+}
+						</code></pre>
+					</section>
+
+				</section>
+
+
+				<section>
+					<section>
+						<h3>Testing</h3>
+						<ul>
+							<li>PHPUnit</li>
+							<li>Behat</li>
+							<li>Phockito</li>
+						</ul>
+						<aside class="notes">
+							<p>
+								And of course, you're already writing tests
+							</p>
+							<p>
+								Tests can feel like a chore, and there's not much getting around that. A good framework
+								will at least help you to get through writing them fast.
+							</p>
+							<p>
+								Dependancy Injection, Fixture loaders, integration with functional tests and client-side
+								test frameworks like Behat are fiddly to set up, but if you're using a framework, it's done
+								for you.
+							</p>
+						</aside>
+					</section>
+
+					<section>
+						<pre style="font-size: 90%"><code class="yaml">
+Member:
+   admin:
+      FirstName: Admin
+      Email: admin@silverstripe.com
+						</code></pre>
+						<aside class="notes">
+							For instance, here's a piece of YAML that lets us set up a test user in SilverStripe.
+						</aside>
+					</section>
+
+					<section>
+						<pre style="font-size: 90%"><code class="php">
+class SecurityTest extends FunctionalTest {
+   protected static $fixture_file
+      = 'MemberTest.yml';
+
+   public function testThatThing() {
+      // Do the test
+   }
+}
+						</code></pre>
+						<aside class="notes">
+							And then to make sure that user exists for a specific test, just reference the fixture.
+						</aside>
+					</section>
+
+					<section>
+						<pre style="font-size: 60%"><code class="text">
+Feature: Create a page
+   As an author
+   I want to create a page in the CMS
+   So that I can grow my website
+
+   @javascript
+   Scenario: I can create a page from the pages section
+      Given I am logged in with "ADMIN" permissions
+      And I go to "/admin/pages"
+      And I should see a "Add new" button in CMS Content Toolbar
+      When I press the "Add new" button
+      And I select the "Page" radio button
+      And I press the "Create" button
+      Then I should see an edit page form
+						</code></pre>
+						<aside class="notes">
+							And then to make sure that user exists for a specific test, just reference the fixture.
+						</aside>
+					</section>
+
+					<section>
+						<h3>Continuous integration</h3>
+
+						<ul>
+							<li>Travis</li>
+							<li>Teamcity</li>
+							<li>Jenkins</li>
+						</ul>
+
+					</section>
+
+					<section>
+						<h3>Continuous deployment?</h3>
+					</section>
+
+				</section>
+
+				<section>
+					<h3>Consistent and reproducible development environments</h3>
+					<ul>
+						<li>Puppet</li>
+						<li>Vagrant</li>
+						<li>Docker</li>
+					</ul>
+				</section>
+
+				<section>
+					<section>
+						<h3>Dependency management</h3>
+						<ul>
+							<li>Composer</li>
+							<li>Packagist</li>
+						</ul>
+					</section>
+
+					<section>
+						<pre style="font-size: 60%"><code class="text">{
+   "name": "silverstripe/cms",
+   "type": "silverstripe-module",
+   "description": "The SilverStripe Content Management System",
+   "homepage": "http://silverstripe.org",
+   "license": "BSD-3-Clause",
+   "keywords": ["silverstripe", "cms"],
+   "require": {
+      "php": ">=5.3.2",
+      "composer/installers": "*",
+      "silverstripe/framework": "3.1.*"
+   },
+   "minimum-stability": "dev"
+}
+                  </code></pre>
+					</section>
+				</section>
+
+				<section>
+					<h3>Monitoring</h3>
+					<ul>
+						<li>Greylog2</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Specifications</h3>
+					<ul>
+						<li>PSR-0, etc</li>
+						<li>Internal code style documentation</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Language features</h3>
+					<ul>
+						<li>Exceptions</li>
+						<li>Name spaces</li>
+						<li>Improved expressibility</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>What have we learned?</h3>
+					<ul>
+						<li>Everything is acceptable except ignorance</li>
+						<li>Tools tools tools</li>
+						<li>You can be grown up and still have fun</li>
+					</ul>
+				</section>
+
+				<section>
+					<h1>The end</h1>
 
 					<aside class="notes">
 					</aside>
@@ -68,8 +808,8 @@
 			// Full list of configuration options available here:
 			// https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
-				controls: false,
-				progress: false,
+				controls: true,
+				progress: true,
 				history: true,
 				center: true,
 
@@ -95,10 +835,17 @@
 					, { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
 
 					// Remote speaker notes
-					, { src: 'socket.io/socket.io.js', async: true }
-					, { src: 'plugin/notes-server/client.js', async: true }
+					// , { src: 'socket.io/socket.io.js', async: true }
+					// , { src: 'plugin/notes-server/client.js', async: true }
 				]
 			});
+
+			Reveal.addEventListener( 'fragmentshown', function( event ) {
+				if (event.fragment.id == 'shrink-scrum-diagram') {
+					document.getElementById('scrum-diagram').style.width='250px';
+				}
+			});
+
 
 		</script>
 
